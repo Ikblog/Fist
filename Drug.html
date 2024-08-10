@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Information App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        #searchBar {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #drugList {
+            margin-top: 20px;
+        }
+
+        .drug-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .drug-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        #drugDetails {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        dialog {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .close-button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Drug Information Search</h1>
+        <input type="text" id="searchBar" placeholder="Search for a drug...">
+        <div id="drugList"></div>
+        <div id="drugDetails"></div>
+    </div>
+    <dialog id="drugDialog">
+        <div id="dialogContent"></div>
+        <button class="close-button" id="closeDialog">Close</button>
+    </dialog>
+    <script>
+        const drugs = [
+            { name: "Aspirin", use: "Pain relief, fever reduction, anti-inflammatory", how: "Reduces pain, fever, and inflammation", illness: "Headaches, muscle pain, arthritis" },
+            { name: "Ibuprofen", use: "Pain relief, fever reduction, anti-inflammatory", how: "Reduces pain, fever, and inflammation", illness: "Headaches, muscle pain, arthritis, menstrual cramps" },
+            { name: "Acetaminophen", use: "Pain relief, fever reduction", how: "Reduces pain and fever", illness: "Headaches, muscle pain, colds, flu" },
+            { name: "Amoxicillin", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections, such as ear infections, bladder infections" },
+            { name: "Metformin", use: "Blood sugar control", how: "Helps control blood sugar levels", illness: "Type 2 diabetes" },
+            { name: "Atorvastatin", use: "Cholesterol reduction", how: "Lowers cholesterol levels", illness: "High cholesterol" },
+            { name: "Lisinopril", use: "Blood pressure control", how: "Lowers blood pressure", illness: "High blood pressure" },
+            { name: "Omeprazole", use: "Acid reflux relief", how: "Reduces stomach acid", illness: "GERD, stomach ulcers" },
+            { name: "Levothyroxine", use: "Thyroid hormone replacement", how: "Regulates metabolism", illness: "Hypothyroidism" },
+            { name: "Albuterol", use: "Bronchodilator", how: "Relieves bronchospasm", illness: "Asthma, COPD" },
+            { name: "Gabapentin", use: "Nerve pain relief, anticonvulsant", how: "Relieves nerve pain, prevents seizures", illness: "Nerve pain, epilepsy" },
+            { name: "Sertraline", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Losartan", use: "Blood pressure control", how: "Lowers blood pressure", illness: "High blood pressure" },
+            { name: "Hydrochlorothiazide", use: "Diuretic", how: "Reduces fluid retention", illness: "High blood pressure, edema" },
+            { name: "Montelukast", use: "Allergy and asthma relief", how: "Reduces inflammation in airways", illness: "Asthma, allergic rhinitis" },
+            { name: "Amoxicillin/Clavulanate", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections" },
+            { name: "Prednisone", use: "Anti-inflammatory", how: "Reduces inflammation", illness: "Autoimmune diseases, allergies" },
+            { name: "Simvastatin", use: "Cholesterol reduction", how: "Lowers cholesterol levels", illness: "High cholesterol" },
+            { name: "Trazodone", use: "Antidepressant, sleep aid", how: "Improves mood, aids sleep", illness: "Depression, insomnia" },
+            { name: "Amlodipine", use: "Blood pressure control", how: "Lowers blood pressure", illness: "High blood pressure" },
+            { name: "Fluticasone", use: "Anti-inflammatory", how: "Reduces inflammation in airways", illness: "Asthma, allergic rhinitis" },
+            { name: "Furosemide", use: "Diuretic", how: "Reduces fluid retention", illness: "Edema, high blood pressure" },
+            { name: "Metoprolol", use: "Blood pressure control", how: "Lowers blood pressure", illness: "High blood pressure, heart disease" },
+            { name: "Pantoprazole", use: "Acid reflux relief", how: "Reduces stomach acid", illness: "GERD, stomach ulcers" },
+            { name: "Clopidogrel", use: "Blood thinner", how: "Prevents blood clots", illness: "Heart disease, stroke prevention" },
+            { name: "Escitalopram", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Fluoxetine", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Ranitidine", use: "Acid reducer", how: "Reduces stomach acid", illness: "GERD, stomach ulcers" },
+            { name: "Warfarin", use: "Blood thinner", how: "Prevents blood clots", illness: "Heart disease, stroke prevention" },
+            { name: "Meloxicam", use: "Pain relief, anti-inflammatory", how: "Reduces pain and inflammation", illness: "Arthritis" },
+            { name: "Tramadol", use: "Pain relief", how: "Relieves moderate to severe pain", illness: "Moderate to severe pain" },
+            { name: "Zolpidem", use: "Sleep aid", how: "Aids sleep", illness: "Insomnia" },
+            { name: "Clonazepam", use: "Anticonvulsant, anti-anxiety", how: "Prevents seizures, reduces anxiety", illness: "Epilepsy, anxiety disorders" },
+            { name: "Propranolol", use: "Blood pressure control, anxiety relief", how: "Lowers blood pressure, reduces anxiety", illness: "High blood pressure, anxiety disorders" },
+            { name: "Cyclobenzaprine", use: "Muscle relaxant", how: "Relieves muscle spasms", illness: "Muscle spasms" },
+            { name: "Doxycycline", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections, acne" },
+            { name: "Venlafaxine", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Oxycodone", use: "Pain relief", how: "Relieves moderate to severe pain", illness: "Moderate to severe pain" },
+            { name: "Lorazepam", use: "Anti-anxiety, anticonvulsant", how: "Reduces anxiety, prevents seizures", illness: "Anxiety disorders, epilepsy" },
+            { name: "Allopurinol", use: "Uric acid reducer", how: "Reduces uric acid levels", illness: "Gout" },
+            { name: "Paroxetine", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Atenolol", use: "Blood pressure control", how: "Lowers blood pressure", illness: "High blood pressure" },
+            { name: "Lyrica", use: "Nerve pain relief, anticonvulsant", how: "Relieves nerve pain, prevents seizures", illness: "Nerve pain, epilepsy" },
+            { name: "Lantus", use: "Blood sugar control", how: "Helps control blood sugar levels", illness: "Diabetes" },
+            { name: "Symbicort", use: "Asthma and COPD treatment", how: "Reduces inflammation in airways, opens airways", illness: "Asthma, COPD" },
+            { name: "Topamax", use: "Anticonvulsant, migraine prevention", how: "Prevents seizures, prevents migraines", illness: "Epilepsy, migraines" },
+            { name: "Cymbalta", use: "Antidepressant, nerve pain relief", how: "Improves mood, relieves nerve pain", illness: "Depression, nerve pain" },
+            { name: "Adderall", use: "ADHD treatment", how: "Improves focus, reduces hyperactivity", illness: "ADHD" },
+            { name: "Ambien", use: "Sleep aid", how: "Aids sleep", illness: "Insomnia" },
+            { name: "Valium", use: "Anti-anxiety, anticonvulsant", how: "Reduces anxiety, prevents seizures", illness: "Anxiety disorders, epilepsy" },
+            { name: "Cipro", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections" },
+            { name: "Zithromax", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections" },
+            { name: "Lexapro", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Zoloft", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Celexa", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Prozac", use: "Antidepressant", how: "Improves mood, reduces anxiety", illness: "Depression, anxiety disorders" },
+            { name: "Singulair", use: "Allergy and asthma relief", how: "Reduces inflammation in airways", illness: "Asthma, allergic rhinitis" },
+            { name: "Wellbutrin", use: "Antidepressant, smoking cessation aid", how: "Improves mood, helps quit smoking", illness: "Depression, smoking cessation" },
+            { name: "Bactrim", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections" },
+            { name: "Buspar", use: "Anti-anxiety", how: "Reduces anxiety", illness: "Anxiety disorders" },
+            { name: "Augmentin", use: "Antibiotic", how: "Kills bacteria causing infections", illness: "Bacterial infections" }
+        ];
+
+        const searchBar = document.getElementById('searchBar');
+        const drugList = document.getElementById('drugList');
+        const drugDetails = document.getElementById('drugDetails');
+        const drugDialog = document.getElementById('drugDialog');
+        const dialogContent = document.getElementById('dialogContent');
+        const closeDialog = document.getElementById('closeDialog');
+
+        searchBar.addEventListener('input', () => {
+            const query = searchBar.value.toLowerCase();
+            displayDrugList(query);
+        });
+
+        function displayDrugList(query) {
+            drugList.innerHTML = '';
+            const filteredDrugs = drugs.filter(drug => drug.name.toLowerCase().startsWith(query)).slice(0, 10);
+            filteredDrugs.forEach(drug => {
+                const drugItem = document.createElement('div');
+                drugItem.classList.add('drug-item');
+                drugItem.textContent = drug.name;
+                drugItem.addEventListener('click', () => displayDrugDetails(drug));
+                drugList.appendChild(drugItem);
+            });
+
+            if (filteredDrugs.length === 0) {
+                drugDetails.innerHTML = '<p>No drugs found.</p>';
+            }
+        }
+
+        function displayDrugDetails(drug) {
+            dialogContent.innerHTML = `
+                <h2>${drug.name}</h2>
+                <p><strong>Use:</strong> ${drug.use}</p>
+                <p><strong>How:</strong> ${drug.how}</p>
+                <p><strong>Illness:</strong> ${drug.illness}</p>
+            `;
+            drugDialog.showModal();
+        }
+
+        closeDialog.addEventListener('click', () => {
+            drugDialog.close();
+        });
+
+        displayDrugList('');
+    </script>
+</body>
+</html>
