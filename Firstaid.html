@@ -9,9 +9,8 @@
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
             margin: 0;
-            padding: 0
+            padding: 0;
             text-align: center;
-           
         }
 
         .container {
@@ -20,11 +19,6 @@
             margin: 0 auto;
             padding: 20px;
             box-sizing: border-box;
-
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-          
         }
 
         h1 {
@@ -80,7 +74,7 @@
             margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 90%;
             max-width: 500px;
             border-radius: 10px;
             box-sizing: border-box;
@@ -110,6 +104,35 @@
         #illnessTreatment {
             margin-bottom: 15px;
             line-height: 1.5;
+        }
+
+        /* Mobile responsiveness */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 1.2em;
+            }
+
+            #searchInput {
+                padding: 8px;
+            }
+
+            #illnessList li {
+                padding: 8px;
+            }
+
+            .modal-content {
+                margin: 15% auto;
+                padding: 15px;
+                width: 90%;
+            }
+
+            .close {
+                font-size: 24px;
+            }
+
+            #illnessName {
+                font-size: 1.2em;
+            }
         }
     </style>
 </head>
@@ -379,4 +402,86 @@
             {
                 name: 'Kidney Stones',
                 effects: 'Severe pain in the back or side, blood in the urine, and nausea.',
-                treatmen
+                treatment: 'Drink plenty of water, take pain relievers, and follow medical advice for passing the stone. Seek medical attention for severe pain or complications.'
+            },
+            {
+                name: 'Laryngitis',
+                effects: 'Hoarseness or loss of voice, sore throat, and dry cough.',
+                treatment: 'Rest your voice, drink plenty of fluids, and use throat lozenges. Avoid whispering, which can strain your vocal cords.'
+            },
+            {
+                name: 'Migraine',
+                effects: 'Severe headache often accompanied by nausea, vomiting, and sensitivity to light and sound.',
+                treatment: 'Rest in a dark, quiet room, apply a cool compress to your forehead, and take prescribed medications. Stay hydrated and avoid known triggers.'
+            },
+            {
+                name: 'Psoriasis',
+                effects: 'Red, scaly patches of skin, often on the elbows, knees, or scalp.',
+                treatment: 'Use moisturizing creams, medicated shampoos, and topical treatments prescribed by a doctor. Avoid triggers such as stress and certain foods.'
+            },
+            {
+                name: 'Ringworm',
+                effects: 'Circular, red, itchy rash with a raised border, often on the skin or scalp.',
+                treatment: 'Apply over-the-counter antifungal creams and keep the affected area clean and dry. Avoid sharing personal items to prevent spreading.'
+            },
+            {
+                name: 'Scabies',
+                effects: 'Intense itching, especially at night, with a pimple-like rash.',
+                treatment: 'Use prescription creams or lotions as directed by a doctor. Wash all clothing, bedding, and towels in hot water.'
+            },
+            {
+                name: 'Shingles',
+                effects: 'Painful rash with blisters, usually on one side of the body, often with tingling or burning sensation.',
+                treatment: 'Take prescribed antiviral medications, use pain relievers, and apply cool compresses to the rash. Keep the affected area clean and avoid scratching.'
+            },
+            {
+                name: 'Tonsillitis',
+                effects: 'Sore throat, difficulty swallowing, red and swollen tonsils, sometimes with white patches.',
+                treatment: 'Rest, drink warm liquids, and use over-the-counter pain relievers. Gargle with warm salt water and avoid irritants such as smoke.'
+            }
+        ];
+
+
+        // JavaScript to handle search and modal display
+        const searchInput = document.getElementById('searchInput');
+        const illnessList = document.getElementById('illnessList');
+        const illnessDialog = document.getElementById('illnessDialog');
+        const illnessName = document.getElementById('illnessName');
+        const illnessEffects = document.getElementById('illnessEffects');
+        const illnessTreatment = document.getElementById('illnessTreatment');
+        const closeModal = document.getElementsByClassName('close')[0];
+
+        // Filter illnesses based on search input
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            illnessList.innerHTML = '';
+
+            illnesses.forEach(function(illness) {
+                if (illness.name.toLowerCase().includes(filter)) {
+                    const li = document.createElement('li');
+                    li.textContent = illness.name;
+                    li.addEventListener('click', function() {
+                        illnessName.textContent = illness.name;
+                        illnessEffects.textContent = illness.effects;
+                        illnessTreatment.textContent = illness.treatment;
+                        illnessDialog.style.display = 'block';
+                    });
+                    illnessList.appendChild(li);
+                }
+            });
+        });
+
+        // Close the modal when the user clicks the close button
+        closeModal.onclick = function() {
+            illnessDialog.style.display = 'none';
+        }
+
+        // Close the modal when the user clicks outside of it
+        window.onclick = function(event) {
+            if (event.target == illnessDialog) {
+                illnessDialog.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
