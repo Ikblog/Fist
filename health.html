@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Diagnosis App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .input-field {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid #ddd;
+            border-top: none;
+            background-color: #fff;
+            z-index: 1000;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .suggestions div {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            background-color: #e9f7ef;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Health Diagnosis (First Aid Box)</h2>
+    <div class="input-field">
+        <label for="illness">Search for an illness:</label>
+        <input type="text" id="illness" placeholder="e.g., flu, common cold, stomach ache" onkeyup="showSuggestions()">
+        <div id="suggestions" class="suggestions" style="display: none;"></div>
+    </div>
+    <button id="searchButton" onclick="searchIllness()">Search</button>
+    
+    <div id="result" class="result" style="display: none;"></div>
+</div>
+
+<script>
+    const illnesses = {
+        "common cold": {
+            symptoms: "Sneezing, Runny Nose, Sore Throat",
+            solution: "Rest, stay hydrated, and use over-the-counter medications if needed. Drug: Paracetamol."
+        },
+        "flu": {
+            symptoms: "Fever, Chills, Muscle Aches",
+            solution: "Rest, drink plenty of fluids, and take pain relievers if needed. Drug: Oseltamivir."
+        },
+        "stomach ache": {
+            symptoms: "Abdominal Pain, Nausea",
+            solution: "Eat light meals, avoid spicy foods, and stay hydrated. Drug: Antacids."
+        },
+        "headache": {
+            symptoms: "Pain in Head, Sensitivity to Light",
+            solution: "Rest in a quiet, dark room, and take pain relievers if needed. Drug: Ibuprofen."
+        },
+        "allergic reaction": {
+            symptoms: "Itching, Swelling, Rash",
+            solution: "Avoid allergens, take antihistamines, and seek medical help if severe. Drug: Diphenhydramine."
+        },
+        "sprained ankle": {
+            symptoms: "Swelling, Bruising, Pain",
+            solution: "Rest, ice the area, compress with a bandage, and elevate the ankle. Drug: Ibuprofen."
+        },
+        "burn": {
+            symptoms: "Redness, Pain, Blisters",
+            solution: "Cool the burn under running water, cover with a clean cloth, and avoid popping blisters. Drug: Silver sulfadiazine cream."
+        },
+        "cuts and scrapes": {
+            symptoms: "Bleeding, Pain, Swelling",
+            solution: "Clean the wound with water, apply an antiseptic, and cover with a bandage. Drug: Neosporin."
+        },
+        "asthma attack": {
+            symptoms: "Shortness of Breath, Wheezing",
+            solution: "Use your inhaler, sit up straight, and stay calm. Seek medical help if severe. Drug: Albuterol."
+        },
+        "toothache": {
+            symptoms: "Pain in Tooth, Sensitivity to Hot or Cold",
+            solution: "Rinse mouth with warm saltwater, take pain relievers, and see a dentist. Drug: Ibuprofen."
+        },
+        "ear infection": {
+            symptoms: "Ear Pain, Hearing Loss, Fluid Drainage",
+            solution: "Use prescribed ear drops, take pain relievers, and consult a doctor. Drug: Amoxicillin."
+        },
+        "fainting": {
+            symptoms: "Dizziness, Loss of Consciousness",
+            solution: "Lie down and elevate legs, avoid standing up too quickly, and consult a doctor if recurrent. Drug: None."
+        },
+        "frostbite": {
+            symptoms: "Numbness, White or Waxy Skin",
+            solution: "Move to a warm area, avoid rubbing the affected area, and seek medical help immediately. Drug: Ibuprofen."
+        },
+        "heat exhaustion": {
+            symptoms: "Heavy Sweating, Weakness, Nausea",
+            solution: "Move to a cool place, drink water, and rest. Seek medical help if symptoms worsen. Drug: None."
+        },
+        "insect bite": {
+            symptoms: "Redness, Swelling, Itching",
+            solution: "Apply a cold pack, use anti-itch cream, and take antihistamines if needed. Drug: Hydrocortisone cream."
+        },
+        "nosebleed": {
+            symptoms: "Bleeding from the Nose",
+            solution: "Sit up straight, pinch your nose, and lean forward. Seek help if bleeding persists. Drug: None."
+        },
+        "poison ivy": {
+            symptoms: "Red Rash, Itching, Blisters",
+            solution: "Wash skin with soap and water, use calamine lotion, and avoid scratching. Drug: Calamine lotion."
+        },
+        "sunburn": {
+            symptoms: "Red, Painful Skin",
+            solution: "Cool the skin with cold compresses, apply aloe vera, and stay hydrated. Drug: Aloe vera gel."
+        },
+        "dehydration": {
+            symptoms: "Dry Mouth, Dizziness, Fatigue",
+            solution: "Drink plenty of fluids, eat hydrating foods, and rest in a cool place. Drug: Oral rehydration salts."
+        },
+        "hypoglycemia": {
+            symptoms: "Sweating, Shakiness, Confusion",
+            solution: "Consume fast-acting carbohydrates like juice or candy, and monitor blood sugar levels. Drug: Glucose tablets."
+        },
+        "hyperventilation": {
+            symptoms: "Rapid Breathing, Dizziness, Numbness",
+            solution: "Breathe slowly into a paper bag, and try to remain calm. Drug: None."
+        },
+        "constipation": {
+            symptoms: "Infrequent Bowel Movements, Straining",
+            solution: "Increase fiber intake, drink plenty of water, and exercise regularly. Drug: Laxatives."
+        },
+        "diarrhea": {
+            symptoms: "Frequent, Watery Stools",
+            solution: "Stay hydrated, avoid dairy and fatty foods, and take over-the-counter medications if needed. Drug: Loperamide."
+        },
+        "chickenpox": {
+            symptoms: "Itchy Rash, Fever, Fatigue",
+            solution: "Keep the skin cool, use calamine lotion, and avoid scratching. Consult a doctor for antiviral medications if needed. Drug: Acyclovir."
+        },
+        "motion sickness": {
+            symptoms: "Nausea, Dizziness, Vomiting",
+            solution: "Focus on a fixed point, take anti-nausea medication, and avoid reading during travel. Drug: Dimenhydrinate."
+        },
+        "sore throat": {
+            symptoms: "Painful Throat, Difficulty Swallowing",
+            solution: "Gargle with warm saltwater, drink warm liquids, and use throat lozenges. Drug: Ibuprofen."
+        },
+        "muscle cramps": {
+            symptoms: "Sudden Muscle Tightening, Pain",
+            solution: "Gently stretch the muscle, massage the area, and stay hydrated. Drug: Ibuprofen."
+        },
+        "dizziness": {
+            symptoms: "Feeling Lightheaded, Unsteady",
+            solution: "Sit or lie down until it passes, avoid sudden movements, and stay hydrated. Drug: Meclizine."
+        },
+        "panic attack": {
+            symptoms: "Rapid Heartbeat, Shortness of Breath, Fear",
+            solution: "Practice deep breathing, reassure yourself, and seek help if needed. Drug: None."
+        },
+        "sinusitis": {
+            symptoms: "Facial Pain, Congestion, Headache",
+            solution: "Use saline nasal spray, take pain relievers, and stay hydrated. Drug: Amoxicillin."
+        },
+        "pink eye (conjunctivitis)": {
+            symptoms: "Red, Itchy Eyes, Discharge",
+            solution: "Clean the eyes with a warm cloth, avoid touching the eyes, and use prescribed eye drops if needed. Drug: Antibiotic eye drops."
+        },
+        "back pain": {
+            symptoms: "Pain in the Back, Stiffness",
+            solution: "Rest, apply heat or cold packs, and take pain relievers if needed. Drug: Ibuprofen."
+        },
+        "blisters": {
+            symptoms: "Fluid-Filled Bumps on Skin",
+            solution: "Avoid popping the blister, keep it clean, and cover with a bandage. Drug: Antibiotic ointment."
+        },
+        "food poisoning": {
+            symptoms: "Nausea, Vomiting, Diarrhea",
+            solution: "Stay hydrated, eat bland foods, and rest. Drug: Loperamide."
+        },
+        "tendonitis": {
+            symptoms: "Pain in Tendons, Swelling",
+            solution: "Rest the affected area, apply ice, and take anti-inflammatory medication. Drug: Ibuprofen."
+        },
+        "athlete's foot": {
+            symptoms: "Itchy, Red, Scaly Skin",
+            solution: "Keep feet dry, use antifungal cream, and avoid walking barefoot in public places. Drug: Clotrimazole cream."
+        },
+        "appendicitis": {
+            symptoms: "Pain in Lower Right Abdomen, Fever",
+            solution: "Seek immediate medical attention. Drug: Antibiotics before surgery."
+        },
+        "bronchitis": {
+            symptoms: "Cough, Mucus Production, Fatigue",
+            solution: "Rest, drink fluids, and use a humidifier. Consult a doctor if needed. Drug: Amoxicillin."
+        },
+        "cold sores": {
+            symptoms: "Painful Blisters on Lips or Face",
+            solution: "Apply antiviral cream, avoid picking at the sores, and keep the area clean. Drug: Acyclovir."
+        },
+        "croup": {
+            symptoms: "Barking Cough, Hoarseness, Difficulty Breathing",
+            solution: "Use a humidifier, keep the child calm, and consult a doctor if needed. Drug: Dexamethasone."
+        },
+        "dermatitis": {
+            symptoms: "Red, Itchy Skin",
+            solution: "Apply moisturizers, avoid irritants, and use corticosteroid cream if needed. Drug: Hydrocortisone cream."
+        },
+        "eczema": {
+            symptoms: "Dry, Itchy Skin",
+            solution: "Moisturize regularly, avoid irritants, and use corticosteroid cream if needed. Drug: Hydrocortisone cream."
+        },
+        "fungal nail infection": {
+            symptoms: "Thickened, Discolored Nails",
+            solution: "Use antifungal cream or oral medication. Drug: Terbinafine."
+        },
+        "gastroenteritis": {
+            symptoms: "Nausea, Vomiting, Diarrhea",
+            solution: "Stay hydrated, eat bland foods, and rest. Drug: Loperamide."
+        },
+        "gout": {
+            symptoms: "Severe Joint Pain, Swelling, Redness",
+            solution: "Rest the affected joint, apply ice, and take anti-inflammatory medication. Drug: Colchicine."
+        },
+        "hay fever": {
+            symptoms: "Sneezing, Runny Nose, Itchy Eyes",
+            solution: "Avoid allergens, take antihistamines, and use nasal spray if needed. Drug: Loratadine."
+        },
+        "heartburn": {
+            symptoms: "Burning Sensation in Chest",
+            solution: "Avoid spicy foods, eat smaller meals, and take antacids if needed. Drug: Omeprazole."
+        },
+        "hives": {
+            symptoms: "Itchy, Red Welts on Skin",
+            solution: "Avoid triggers, take antihistamines, and use calamine lotion if needed. Drug: Diphenhydramine."
+        },
+        "kidney stones": {
+            symptoms: "Severe Pain in Back or Side, Blood in Urine",
+            solution: "Drink plenty of water, take pain relievers, and consult a doctor. Drug: Tamsulosin."
+        },
+        "laryngitis": {
+            symptoms: "Hoarseness, Sore Throat, Cough",
+            solution: "Rest your voice, drink warm liquids, and avoid irritants. Drug: None."
+        },
+        "migraine": {
+            symptoms: "Severe Headache, Sensitivity to Light",
+            solution: "Rest in a dark room, take prescribed medication, and avoid triggers. Drug: Sumatriptan."
+        },
+        "psoriasis": {
+            symptoms: "Red, Scaly Patches on Skin",
+            solution: "Apply moisturizers, use corticosteroid cream, and avoid triggers. Drug: Hydrocortisone cream."
+        },
+        "ringworm": {
+            symptoms: "Red, Circular Rash, Itching",
+            solution: "Keep the area clean and dry, use antifungal cream, and avoid sharing personal items. Drug: Clotrimazole cream."
+        },
+        "scabies": {
+            symptoms: "Intense Itching, Rash",
+            solution: "Use prescribed medication, wash bedding and clothes in hot water, and avoid skin-to-skin contact. Drug: Permethrin cream."
+        },
+        "shingles": {
+            symptoms: "Painful Rash, Blisters",
+            solution: "Apply cool compresses, take pain relievers, and use antiviral medication if needed. Drug: Acyclovir."
+        },
+        "tonsillitis": {
+            symptoms: "Sore Throat, Swollen Tonsils, Fever",
+            solution: "Rest, drink warm liquids, and take pain relievers if needed. Consult a doctor for antibiotics if necessary. Drug: Amoxicillin."
+        }
+    };
+
+    function showSuggestions() {
+        const input = document.getElementById("illness").value.toLowerCase();
+        const suggestions = document.getElementById("suggestions");
+        suggestions.innerHTML = '';
+        if (input) {
+            const matches = Object.keys(illnesses).filter(illness => illness.startsWith(input));
+            if (matches.length > 0) {
+                suggestions.style.display = 'block';
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.textContent = match;
+                    div.onclick = () => {
+                        document.getElementById("illness").value = match;
+                        suggestions.style.display = 'none';
+                    };
+                    suggestions.appendChild(div);
+                });
+            } else {
+                suggestions.style.display = 'none';
+            }
+        } else {
+            suggestions.style.display = 'none';
+        }
+    }
+
+    function searchIllness() {
+        const input = document.getElementById("illness").value.toLowerCase();
+        const result = document.getElementById("result");
+        if (illnesses[input]) {
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>${input.charAt(0).toUpperCase() + input.slice(1)}</h3>
+                <p><strong>Symptoms:</strong> ${illnesses[input].symptoms}</p>
+                <p><strong>Solution:</strong> ${illnesses[input].solution}</p>
+            `;
+        } else {
+            result.style.display = 'block';
+            result.innerHTML = '<p>No matching illness found. Please try again.</p>';
+        }
+    }
+</script>
+
+</body>
+</html>
