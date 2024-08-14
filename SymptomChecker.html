@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 370px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: Green;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+             box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        #treatment {
+            margin-top: 10px;
+            font-size: 1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Symptom Checker</h1>
+        <form id="symptom-form">
+            <label for="symptom">Enter your symptom:</label>
+            <input type="text" id="symptom" name="symptom" required>
+
+            <button type="submit">Check Diagnosis</button>
+        </form>
+        <div id="result"></div>
+        <div id="treatment"></div>
+    </div>
+    
+    
+
+    <script>
+        document.getElementById('symptom-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const symptomInput = document.getElementById('symptom').value.toLowerCase().trim();
+
+            const diagnosis = checkDiagnosis(symptomInput);
+            displayResult(diagnosis);
+        });
+
+        function checkDiagnosis(symptom) {
+            // Updated conditions with simple treatments
+            const conditions = {
+                'cold': {
+                    symptoms: ['cough', 'sneezing', 'sore throat'],
+                    treatment: 'Drink plenty of fluids, rest, and take over-the-counter cold medicines.'
+                },
+                'flu': {
+                    symptoms: ['fever', 'body ache', 'chills'],
+                    treatment: 'Rest, drink fluids, and consider antiviral medications if prescribed by a doctor.'
+                },
+                'allergy': {
+                    symptoms: ['sneezing', 'itchy eyes', 'runny nose'],
+                    treatment: 'Avoid allergens, use antihistamines, and try nasal sprays.'
+                },
+                'stomach ache': {
+                    symptoms: ['abdominal pain', 'nausea', 'bloating'],
+                    treatment: 'Eat light meals, avoid spicy foods, and drink ginger tea.'
+                },
+                'headache': {
+                    symptoms: ['head pain', 'sensitivity to light', 'nausea'],
+                    treatment: 'Rest in a dark, quiet room, apply a cool cloth to your head, and consider over-the-counter pain relievers.'
+                },
+                'sprained ankle': {
+                    symptoms: ['swelling', 'pain', 'bruising'],
+                    treatment: 'Rest, ice the ankle, compress with a bandage, and elevate the leg.'
+                },
+                'burn': {
+                    symptoms: ['redness', 'pain', 'blistering'],
+                    treatment: 'Cool the burn under running water, apply aloe vera, and cover with a sterile bandage.'
+                },
+                'toothache': {
+                    symptoms: ['tooth pain', 'swelling', 'sensitivity'],
+                    treatment: 'Rinse with warm salt water, use a cold compress on your cheek, and take pain relievers.'
+                },
+                'ear infection': {
+                    symptoms: ['ear pain', 'difficulty hearing', 'fluid drainage'],
+                    treatment: 'Apply a warm compress to the ear, take pain relievers, and consider over-the-counter ear drops.'
+                },
+                'conjunctivitis': {
+                    symptoms: ['red eyes', 'itchy eyes', 'eye discharge'],
+                    treatment: 'Use warm compresses, clean the eyes regularly, and consider over-the-counter eye drops.'
+                },
+                'migraine': {
+                    symptoms: ['severe head pain', 'sensitivity to light and sound', 'nausea'],
+                    treatment: 'Rest in a dark, quiet room, apply a cold pack to your head, and take prescribed migraine medications.'
+                },
+                'sinusitis': {
+                    symptoms: ['facial pain', 'nasal congestion', 'thick nasal discharge'],
+                    treatment: 'Use a humidifier, take a hot shower, and consider over-the-counter decongestants.'
+                },
+                'food poisoning': {
+                    symptoms: ['nausea', 'vomiting', 'diarrhea'],
+                    treatment: 'Stay hydrated, rest, and avoid solid food until symptoms subside. Seek medical attention if symptoms are severe.'
+                },
+                'eczema': {
+                    symptoms: ['itchy skin', 'red patches', 'dry skin'],
+                    treatment: 'Moisturize the skin regularly, use gentle soaps, and apply over-the-counter anti-itch creams.'
+                },
+                'bronchitis': {
+                    symptoms: ['coughing', 'chest discomfort', 'fatigue'],
+                    treatment: 'Stay hydrated, rest, and use a humidifier or inhale steam to relieve symptoms.'
+                },
+                'athlete’s foot': {
+                    symptoms: ['itchy feet', 'cracked skin', 'redness'],
+                    treatment: 'Keep feet dry, use antifungal creams, and wear breathable shoes and socks.'
+                },
+                'dehydration': {
+                    symptoms: ['dry mouth', 'dizziness', 'fatigue'],
+                    treatment: 'Drink plenty of water, consume oral rehydration solutions, and rest.'
+                },
+                'constipation': {
+                    symptoms: ['infrequent bowel movements', 'hard stools', 'abdominal discomfort'],
+                    treatment: 'Increase fiber intake, drink plenty of water, and engage in regular physical activity.'
+                },
+                'diarrhea': {
+                    symptoms: ['loose stools', 'abdominal cramps', 'urgency to defecate'],
+                    treatment: 'Stay hydrated, avoid solid foods initially, and eat bland foods like bananas and rice.'
+                },
+                'muscle cramps': {
+                    symptoms: ['sudden, sharp pain', 'tightened muscle', 'soreness'],
+                    treatment: 'Stretch the affected muscle, massage gently, and drink water or electrolyte drinks.'
+                },
+                'back pain': {
+                    symptoms: ['dull ache', 'stiffness', 'limited range of motion'],
+                    treatment: 'Rest, apply heat or ice, and take over-the-counter pain relievers.'
+                },
+                'insect bite': {
+                    symptoms: ['redness', 'swelling', 'itching'],
+                    treatment: 'Apply a cold compress, use over-the-counter antihistamines, and avoid scratching.'
+                },
+                'sunburn': {
+                    symptoms: ['red skin', 'pain', 'blisters'],
+                    treatment: 'Cool the skin with damp cloths, apply aloe vera, and stay hydrated.'
+                },
+                'nausea': {
+                    symptoms: ['queasiness', 'urge to vomit', 'dizziness'],
+                    treatment: 'Sip on ginger tea, eat small, bland meals, and stay hydrated.'
+                },
+                'motion sickness': {
+                    symptoms: ['dizziness', 'nausea', 'vomiting'],
+                    treatment: 'Focus on the horizon, chew ginger, and take over-the-counter motion sickness medications.'
+                },
+                'sore throat': {
+                    symptoms: ['painful swallowing', 'scratchy throat', 'redness'],
+                    treatment: 'Gargle with warm salt water, drink warm liquids, and use throat lozenges.'
+                },
+                'panic attack': {
+                    symptoms: ['rapid heartbeat', 'shortness of breath', 'dizziness'],
+                    treatment: 'Practice deep breathing, focus on a calming thought, and seek a quiet place.'
+                },
+                'fainting': {
+                    symptoms: ['dizziness', 'blurred vision', 'loss of consciousness'],
+                    treatment: 'Lie down with legs elevated, drink water, and avoid standing up too quickly.'
+                },
+                'burn (minor)': {
+                    symptoms: ['redness', 'pain', 'blistering'],
+                    treatment: 'Cool the burn under running water, apply aloe vera, and cover with a sterile bandage.'
+                },
+                'hyperventilation': {
+                    symptoms: ['rapid breathing', 'dizziness', 'tingling in hands or feet'],
+                    treatment: 'Breathe slowly into a paper bag, practice calm breathing, and try to relax.'
+                },
+                'hypoglycemia': {
+                    symptoms: ['shakiness', 'sweating', 'confusion'],
+                    treatment: 'Eat or drink something sugary, rest, and monitor blood sugar levels.'
+                },
+                'heat exhaustion': {
+                    symptoms: ['heavy sweating', 'weakness', 'dizziness'],
+                    treatment: 'Move to a cooler place, drink water, and rest. Seek medical attention if symptoms worsen.'
+                },
+                'frostbite': {
+                    symptoms: ['cold skin', 'numbness', 'discolored skin'],
+                    treatment: 'Warm the affected area gradually, avoid rubbing the skin, and seek medical attention.'
+                }
+            };
+
+            // Check each condition to see if the symptom matches any of its symptoms
+            for (let condition in conditions) {
+                const conditionSymptoms = conditions[condition].symptoms;
+                if (conditionSymptoms.includes(symptom)) {
+                    return {
+                        diagnosis: `You might have ${condition}.`,
+                        treatment: conditions[condition].treatment
+                    };
+                }
+            }
+            
+            return {
+                diagnosis: 'No match found. Please consult a healthcare provider.',
+                treatment: ''
+            };
+        }
+
+        function displayResult(diagnosis) {
+            document.getElementById('result').textContent = diagnosis.diagnosis;
+            document.getElementById('treatment').textContent = diagnosis.treatment;
+        }
+    </script>
+</body>
+</html>
