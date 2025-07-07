@@ -3,485 +3,601 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Aid Box</title>
+    <title>First Aid Box AI</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+        * {
             margin: 0;
             padding: 0;
-            text-align: center;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            color: #333;
         }
 
         .container {
-            width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            box-sizing: border-box;
         }
 
-        h1 {
+        .header {
             text-align: center;
-            color: #333;
-            font-size: 1.5em;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            color: white;
         }
 
-        #searchInput {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        #illnessList {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #illnessList li {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            background-color: #fff;
-            transition: background-color 0.3s;
-        }
-
-        #illnessList li:hover {
-            background-color: #f0f0f0;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #illnessName {
-            color: #007BFF;
-            font-size: 1.5em;
+        .header h1 {
+            font-size: 2.8em;
             margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        #illnessEffects,
-        #illnessTreatment {
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .aid-icon {
+            font-size: 4em;
             margin-bottom: 15px;
-            line-height: 1.5;
+            animation: pulse 2s infinite;
         }
 
-        /* Mobile responsiveness */
-        @media screen and (max-width: 600px) {
-            h1 {
-                font-size: 1.2em;
-            }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
 
-            #searchInput {
-                padding: 8px;
-            }
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
 
-            #illnessList li {
-                padding: 8px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-            .modal-content {
-                margin: 15% auto;
+        .search-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-title {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 18px 25px;
+            border: 3px solid #e1e8ed;
+            border-radius: 15px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e74c3c;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.2);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(231, 76, 60, 0.4);
+        }
+
+        .submit-btn.loading {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .result-section {
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border-left: 6px solid #e74c3c;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .condition-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .condition-description {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(231, 76, 60, 0.05);
+            border-radius: 10px;
+        }
+
+        .first-aid-section {
+            background: rgba(39, 174, 96, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 2px solid rgba(39, 174, 96, 0.2);
+        }
+
+        .first-aid-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #27ae60;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .first-aid-steps {
+            color: #2c3e50;
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        .emergency-warning {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid rgba(231, 76, 60, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .emergency-warning-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .emergency-warning-text {
+            color: #c0392b;
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e74c3c;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .disclaimer {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            font-size: 1.1em;
+        }
+
+        .quick-search {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .quick-search-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 2px solid rgba(231, 76, 60, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .quick-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
                 padding: 15px;
-                width: 90%;
             }
 
-            .close {
-                font-size: 24px;
+            .header h1 {
+                font-size: 2.2em;
             }
 
-            #illnessName {
-                font-size: 1.2em;
+            .main-content {
+                padding: 25px;
+            }
+
+            .quick-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .quick-btn {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>First Aid Box</h1>
-        <input type="text" id="searchInput" placeholder="Search for an illness...">
-        <ul id="illnessList"></ul>
-    </div>
-    <div id="illnessDialog" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="illnessName"></h2>
-            <p id="illnessEffects"></p>
-            <h3>First Aid Treatment</h3>
-            <p id="illnessTreatment"></p>
+        <div class="header">
+            <div class="aid-icon">🏥</div>
+            <h1>FIRST AID BOX AI</h1>
+            <p class="subtitle">Emergency First Aid Assistant</p>
+        </div>
+
+        <div class="main-content">
+            <div class="search-section">
+                <div class="search-title">
+                    <span>🔍</span>
+                    <span>Search for Medical Condition</span>
+                </div>
+                
+                <form id="condition-form">
+                    <div class="input-group">
+                        <label for="condition">Enter the name of illness or medical condition:</label>
+                        <input type="text" id="condition" name="condition" placeholder="e.g., heart attack, stroke, burns, allergic reaction..." required>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <span id="btn-text">🚨 Get First Aid Instructions</span>
+                    </button>
+                </form>
+
+                <div class="quick-search">
+                    <div class="quick-search-title">Quick Search Common Emergencies:</div>
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="quickSearch('heart attack')">Heart Attack</button>
+                        <button class="quick-btn" onclick="quickSearch('stroke')">Stroke</button>
+                        <button class="quick-btn" onclick="quickSearch('burns')">Burns</button>
+                        <button class="quick-btn" onclick="quickSearch('choking')">Choking</button>
+                        <button class="quick-btn" onclick="quickSearch('allergic reaction')">Allergic Reaction</button>
+                        <button class="quick-btn" onclick="quickSearch('seizure')">Seizure</button>
+                        <button class="quick-btn" onclick="quickSearch('bleeding')">Severe Bleeding</button>
+                        <button class="quick-btn" onclick="quickSearch('fracture')">Fracture</button>
+                    </div>
+                </div>
+
+                <div id="result-section" class="result-section">
+                    <div id="loading" class="loading-spinner" style="display: none;"></div>
+                    <div id="result-card" class="result-card" style="display: none;">
+                        <div class="condition-title">
+                            <span>🏥</span>
+                            <span id="condition-name">Condition</span>
+                        </div>
+                        <div id="condition-description" class="condition-description"></div>
+                        
+                        <div class="first-aid-section">
+                            <div class="first-aid-title">
+                                <span>🚑</span>
+                                <span>First Aid Steps</span>
+                            </div>
+                            <div id="first-aid-steps" class="first-aid-steps"></div>
+                        </div>
+
+                        <div class="emergency-warning">
+                            <div class="emergency-warning-title">
+                                <span>⚠️</span>
+                                <span>Emergency Warning</span>
+                            </div>
+                            <div class="emergency-warning-text">
+                                Call emergency services (911) immediately if the condition is severe or life-threatening. First aid is temporary care until professional help arrives.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            🚨 <strong>EMERGENCY DISCLAIMER:</strong> This is an AI-powered first aid assistant for educational purposes only. In case of serious medical emergencies, call emergency services (911) immediately. Always seek professional medical help for any serious injury or illness.
         </div>
     </div>
+
     <script>
-        const illnesses = [
-            {
-                name: 'Common Cold',
-                effects: 'Runny nose, sore throat, coughing, sneezing, headaches, body aches.',
-                treatment: 'Rest, drink plenty of fluids, and use over-the-counter cold remedies to relieve symptoms. Gargling with warm salt water can soothe a sore throat.'
-            },
-            {
-                name: 'Flu',
-                effects: 'Fever, chills, muscle aches, cough, congestion, runny nose, headaches, fatigue.',
-                treatment: 'Rest and stay hydrated. Over-the-counter pain relievers can reduce fever and aches. Antiviral medications may be prescribed by a doctor if taken early.'
-            },
-            {
-                name: 'Stomach Ache',
-                effects: 'Pain or discomfort in the abdominal area, bloating, nausea, or cramping.',
-                treatment: 'Rest, drink clear fluids, and avoid solid food for a few hours. Eating bland foods like toast or rice can help when you feel better.'
-            },
-            {
-                name: 'Headache',
-                effects: 'Pain or discomfort in the head or neck area, which can vary in intensity.',
-                treatment: 'Rest in a quiet, dark room. Use a cold or warm compress on your head or neck. Over-the-counter pain relievers can help alleviate the pain.'
-            },
-            {
-                name: 'Allergic Reaction',
-                effects: 'Itching, swelling, redness, or hives on the skin. Severe reactions can include difficulty breathing or swallowing.',
-                treatment: 'For mild reactions, take antihistamines and apply hydrocortisone cream to reduce itching and swelling. Seek emergency medical attention for severe reactions.'
-            },
-            {
-                name: 'Sprained Ankle',
-                effects: 'Pain, swelling, bruising, and limited range of motion in the affected ankle.',
-                treatment: 'Rest, ice the area, compress with an elastic bandage, and elevate the ankle. Avoid putting weight on the injured ankle and consider using crutches if necessary.'
-            },
-            {
-                name: 'Burn',
-                effects: 'Redness, pain, swelling, and blistering of the skin in the affected area.',
-                treatment: 'Cool the burn with running water for at least 10 minutes. Cover with a sterile, non-stick dressing. Do not apply ice or ointments. Seek medical attention for severe burns.'
-            },
-            {
-                name: 'Cuts and Scrapes',
-                effects: 'Bleeding, pain, and possible infection in the affected area.',
-                treatment: 'Clean the wound with water, apply an antibiotic ointment, and cover with a sterile bandage. Change the bandage daily and keep the wound clean and dry.'
-            },
-            {
-                name: 'Asthma Attack',
-                effects: 'Shortness of breath, wheezing, coughing, and chest tightness.',
-                treatment: 'Use a fast-acting inhaler as prescribed. Sit up straight and remain calm. Seek emergency medical help if symptoms do not improve quickly.'
-            },
-            {
-                name: 'Toothache',
-                effects: 'Pain or discomfort in or around a tooth, which can be sharp, throbbing, or constant.',
-                treatment: 'Rinse your mouth with warm salt water, floss to remove any trapped food, and use an over-the-counter pain reliever. See a dentist as soon as possible.'
-            },
-            // Add more illnesses here
-            {
-                name: 'Ear Infection',
-                effects: 'Ear pain, difficulty hearing, drainage from the ear, and sometimes fever.',
-                treatment: 'Use over-the-counter pain relievers and apply a warm compress to the affected ear. See a doctor for possible antibiotic treatment.'
-            },
-            {
-                name: 'Fainting',
-                effects: 'Temporary loss of consciousness, often with lightheadedness or dizziness beforehand.',
-                treatment: 'Lay the person flat on their back and elevate their legs. Loosen any tight clothing and ensure they are breathing freely. Seek medical attention if they do not recover quickly.'
-            },
-            {
-                name: 'Frostbite',
-                effects: 'Numbness, tingling, hard or waxy skin, and blisters in severe cases.',
-                treatment: 'Get the person to a warm environment and remove wet clothing. Warm the affected area with body heat or warm water (not hot). Do not rub or massage the frostbitten area.'
-            },
-            {
-                name: 'Heat Exhaustion',
-                effects: 'Heavy sweating, weakness, dizziness, nausea, headache, and muscle cramps.',
-                treatment: 'Move to a cooler place, drink cool water or sports drinks, and rest. Apply cool, wet cloths to the body or take a cool shower.'
-            },
-            {
-                name: 'Insect Bite',
-                effects: 'Redness, swelling, itching, and pain at the site of the bite.',
-                treatment: 'Wash the area with soap and water, apply a cold pack, and use an antihistamine or hydrocortisone cream to reduce itching and swelling.'
-            },
-            {
-                name: 'Nosebleed',
-                effects: 'Bleeding from one or both nostrils.',
-                treatment: 'Sit up straight and lean forward. Pinch the nostrils together just below the bridge of the nose for 10-15 minutes. Avoid lying down or tilting your head back.'
-            },
-            {
-                name: 'Poison Ivy',
-                effects: 'Red, itchy rash with bumps and blisters.',
-                treatment: 'Wash the skin with soap and water immediately after contact. Apply calamine lotion or hydrocortisone cream to reduce itching. Take an antihistamine if necessary.'
-            },
-            {
-                name: 'Sunburn',
-                effects: 'Red, painful, and swollen skin that may blister.',
-                treatment: 'Cool the skin with a damp cloth or cool bath. Apply aloe vera gel or a moisturizer. Stay hydrated and avoid further sun exposure.'
-            },
-            {
-                name: 'Dehydration',
-                effects: 'Dry mouth, thirst, dark urine, dizziness, and fatigue.',
-                treatment: 'Drink plenty of fluids, preferably water or an oral rehydration solution. Avoid caffeine and alcohol. Rest in a cool place.'
-            },
-            {
-                name: 'Hypoglycemia',
-                effects: 'Shakiness, sweating, confusion, irritability, and rapid heartbeat.',
-                treatment: 'Consume a fast-acting carbohydrate like fruit juice, candy, or glucose tablets. Follow with a snack that includes protein. Seek medical attention if symptoms persist.'
-            },
-            {
-                name: 'Hyperventilation',
-                effects: 'Rapid breathing, dizziness, tingling in the hands and feet, and anxiety.',
-                treatment: 'Breathe slowly into a paper bag or cupped hands. Try to remain calm and focus on slow, deep breaths. Seek medical help if breathing does not normalize.'
-            },
-            {
-                name: 'Constipation',
-                effects: 'Difficulty passing stool, infrequent bowel movements, and abdominal discomfort.',
-                treatment: 'Increase fiber intake with fruits, vegetables, and whole grains. Drink plenty of water and consider using over-the-counter laxatives if needed.'
-            },
-            {
-                name: 'Diarrhea',
-                effects: 'Frequent, loose, or watery stools, abdominal cramps, and nausea.',
-                treatment: 'Stay hydrated with water, clear broths, or oral rehydration solutions. Eat bland foods like bananas, rice, and toast. Avoid dairy, fatty, and spicy foods.'
-            },
-            {
-                name: 'Chickenpox',
-                effects: 'Itchy red spots or blisters all over the body, fever, and fatigue.',
-                treatment: 'Rest, drink plenty of fluids, and use calamine lotion or oatmeal baths to reduce itching. Keep fingernails trimmed to avoid scratching.'
-            },
-            {
-                name: 'Motion Sickness',
-                effects: 'Nausea, vomiting, dizziness, and sweating, often caused by travel.',
-                treatment: 'Sit in a stable position, avoid reading or looking at screens, and focus on the horizon. Use over-the-counter motion sickness medications if needed.'
-            },
-            {
-                name: 'Sore Throat',
-                effects: 'Pain, scratchiness, or irritation in the throat, often accompanied by difficulty swallowing.',
-                treatment: 'Gargle with warm salt water, drink warm liquids, and use throat lozenges or sprays. Over-the-counter pain relievers can help reduce discomfort.'
-            },
-            {
-                name: 'Muscle Cramps',
-                effects: 'Sudden, involuntary contractions of one or more muscles, causing pain.',
-                treatment: 'Gently stretch and massage the affected muscle. Drink water or an electrolyte-rich beverage. Apply a warm or cold compress if needed.'
-            },
-            {
-                name: 'Dizziness',
-                effects: 'A feeling of lightheadedness, unsteadiness, or spinning.',
-                treatment: 'Sit or lie down immediately and avoid sudden movements. Drink water and eat something if you are hungry. Seek medical attention if dizziness persists.'
-            },
-            {
-                name: 'Panic Attack',
-                effects: 'Sudden intense fear or discomfort, chest pain, shortness of breath, and palpitations.',
-                treatment: 'Breathe slowly and deeply, focus on a calming object or thought, and use relaxation techniques. Seek professional help if panic attacks are frequent.'
-            },
-            {
-                name: 'Sinusitis',
-                effects: 'Facial pain, pressure, nasal congestion, and thick nasal discharge.',
-                treatment: 'Stay hydrated, use a humidifier, and apply warm compresses to the face. Over-the-counter decongestants and saline nasal sprays can provide relief.'
-            },
-            {
-                name: 'Pink Eye (Conjunctivitis)',
-                effects: 'Redness, itching, and discharge from the eyes, which may be contagious.',
-                treatment: 'Clean the eye with a warm, damp cloth, avoid touching or rubbing the eyes, and wash hands frequently. Use over-the-counter eye drops and see a doctor if symptoms worsen.'
-            },
-            {
-                name: 'Back Pain',
-                effects: 'Aching or stiffness in the lower back, sometimes radiating to the legs.',
-                treatment: 'Rest, apply ice or heat, and use over-the-counter pain relievers. Gentle stretching and strengthening exercises can also help.'
-            },
-            {
-                name: 'Blisters',
-                effects: 'Fluid-filled sacs on the skin, often caused by friction or burns.',
-                treatment: 'Leave the blister intact if possible. Cover with a sterile bandage or blister pad. If it bursts, clean with mild soap and water, then apply an antibiotic ointment and bandage.'
-            },
-            {
-                name: 'Food Poisoning',
-                effects: 'Nausea, vomiting, diarrhea, and stomach cramps, usually after eating contaminated food.',
-                treatment: 'Rest and drink plenty of fluids to stay hydrated. Avoid solid food until symptoms improve, then start with bland foods. Seek medical attention if symptoms are severe or persistent.'
-            },
-            {
-                name: 'Tendonitis',
-                effects: 'Pain and tenderness along a tendon, often near a joint.',
-                treatment: 'Rest the affected area, apply ice, and take over-the-counter pain relievers. Gentle stretching and strengthening exercises can help once the pain subsides.'
-            },
-            {
-                name: 'Athlete\'s Foot',
-                effects: 'Itchy, stinging, and burning sensation between the toes or on the feet, with flaky or cracked skin.',
-                treatment: 'Keep feet clean and dry, use antifungal creams or powders, and avoid walking barefoot in public areas. Change socks regularly and wear breathable shoes.'
-            },
-            {
-                name: 'Appendicitis',
-                effects: 'Sharp pain in the lower right abdomen, nausea, vomiting, and fever.',
-                treatment: 'Seek emergency medical attention immediately, as this condition requires prompt surgical treatment.'
-            },
-            {
-                name: 'Bronchitis',
-                effects: 'Coughing with mucus, chest discomfort, fatigue, and shortness of breath.',
-                treatment: 'Rest, drink plenty of fluids, use a humidifier, and take over-the-counter cough medicines. Seek medical advice if symptoms persist or worsen.'
-            },
-            {
-                name: 'Chickenpox',
-                effects: 'Itchy red spots or blisters all over the body, fever, and fatigue.',
-                treatment: 'Rest, drink plenty of fluids, and use calamine lotion or oatmeal baths to reduce itching. Keep fingernails trimmed to avoid scratching.'
-            },
-            {
-                name: 'Cold Sores',
-                effects: 'Painful blisters or sores around the lips, mouth, or nose.',
-                treatment: 'Apply over-the-counter antiviral creams or ointments. Keep the area clean and avoid touching the sores to prevent spreading.'
-            },
-            {
-                name: 'Croup',
-                effects: 'Barking cough, hoarseness, and difficulty breathing, often worse at night.',
-                treatment: 'Use a cool-mist humidifier, offer fluids, and keep the child calm. Seek medical attention if breathing difficulty is severe.'
-            },
-            {
-                name: 'Dermatitis',
-                effects: 'Red, itchy, and inflamed skin, sometimes with blisters or cracks.',
-                treatment: 'Avoid irritants, use moisturizing creams, and apply hydrocortisone cream for inflammation. Seek medical advice for severe cases.'
-            },
-            {
-                name: 'Eczema',
-                effects: 'Red, itchy, and scaly patches of skin, often on the hands, feet, or face.',
-                treatment: 'Keep the skin moisturized, use gentle cleansers, and apply hydrocortisone cream to reduce inflammation. Avoid triggers such as certain soaps or fabrics.'
-            },
-            {
-                name: 'Fungal Nail Infection',
-                effects: 'Thickened, discolored, and brittle nails.',
-                treatment: 'Use over-the-counter antifungal nail treatments and keep nails trimmed and clean. Seek medical advice for persistent infections.'
-            },
-            {
-                name: 'Gastroenteritis',
-                effects: 'Nausea, vomiting, diarrhea, and stomach cramps, often caused by a viral or bacterial infection.',
-                treatment: 'Stay hydrated with clear fluids, eat bland foods, and rest. Seek medical attention if symptoms are severe or prolonged.'
-            },
-            {
-                name: 'Gout',
-                effects: 'Severe pain, redness, and swelling in the joints, often in the big toe.',
-                treatment: 'Take prescribed medications to reduce inflammation and pain. Avoid foods high in purines, such as red meat and alcohol.'
-            },
-            {
-                name: 'Hay Fever',
-                effects: 'Sneezing, runny or stuffy nose, itchy eyes, and throat, often due to pollen.',
-                treatment: 'Take antihistamines, use nasal sprays, and avoid exposure to allergens. Keep windows closed and use air conditioning during high pollen seasons.'
-            },
-            {
-                name: 'Heartburn',
-                effects: 'Burning sensation in the chest or throat, often after eating.',
-                treatment: 'Avoid spicy, fatty, or acidic foods. Eat smaller meals and do not lie down immediately after eating. Use is over-the-counter antacids for relief.'
-            },
-            {
-                name: 'Hives',
-                effects: 'Red, itchy welts on the skin, often caused by an allergic reaction.',
-                treatment: 'Take antihistamines and apply calamine lotion to reduce itching. Avoid known triggers and seek medical attention if hives are severe or persistent.'
-            },
-            {
-                name: 'Kidney Stones',
-                effects: 'Severe pain in the back or side, blood in the urine, and nausea.',
-                treatment: 'Drink plenty of water, take pain relievers, and follow medical advice for passing the stone. Seek medical attention for severe pain or complications.'
-            },
-            {
-                name: 'Laryngitis',
-                effects: 'Hoarseness or loss of voice, sore throat, and dry cough.',
-                treatment: 'Rest your voice, drink plenty of fluids, and use throat lozenges. Avoid whispering, which can strain your vocal cords.'
-            },
-            {
-                name: 'Migraine',
-                effects: 'Severe headache often accompanied by nausea, vomiting, and sensitivity to light and sound.',
-                treatment: 'Rest in a dark, quiet room, apply a cool compress to your forehead, and take prescribed medications. Stay hydrated and avoid known triggers.'
-            },
-            {
-                name: 'Psoriasis',
-                effects: 'Red, scaly patches of skin, often on the elbows, knees, or scalp.',
-                treatment: 'Use moisturizing creams, medicated shampoos, and topical treatments prescribed by a doctor. Avoid triggers such as stress and certain foods.'
-            },
-            {
-                name: 'Ringworm',
-                effects: 'Circular, red, itchy rash with a raised border, often on the skin or scalp.',
-                treatment: 'Apply over-the-counter antifungal creams and keep the affected area clean and dry. Avoid sharing personal items to prevent spreading.'
-            },
-            {
-                name: 'Scabies',
-                effects: 'Intense itching, especially at night, with a pimple-like rash.',
-                treatment: 'Use prescription creams or lotions as directed by a doctor. Wash all clothing, bedding, and towels in hot water.'
-            },
-            {
-                name: 'Shingles',
-                effects: 'Painful rash with blisters, usually on one side of the body, often with tingling or burning sensation.',
-                treatment: 'Take prescribed antiviral medications, use pain relievers, and apply cool compresses to the rash. Keep the affected area clean and avoid scratching.'
-            },
-            {
-                name: 'Tonsillitis',
-                effects: 'Sore throat, difficulty swallowing, red and swollen tonsils, sometimes with white patches.',
-                treatment: 'Rest, drink warm liquids, and use over-the-counter pain relievers. Gargle with warm salt water and avoid irritants such as smoke.'
-            }
-        ];
-
-
-        // JavaScript to handle search and modal display
-        const searchInput = document.getElementById('searchInput');
-        const illnessList = document.getElementById('illnessList');
-        const illnessDialog = document.getElementById('illnessDialog');
-        const illnessName = document.getElementById('illnessName');
-        const illnessEffects = document.getElementById('illnessEffects');
-        const illnessTreatment = document.getElementById('illnessTreatment');
-        const closeModal = document.getElementsByClassName('close')[0];
-
-        // Filter illnesses based on search input
-        searchInput.addEventListener('input', function() {
-            const filter = searchInput.value.toLowerCase();
-            illnessList.innerHTML = '';
-
-            illnesses.forEach(function(illness) {
-                if (illness.name.toLowerCase().includes(filter)) {
-                    const li = document.createElement('li');
-                    li.textContent = illness.name;
-                    li.addEventListener('click', function() {
-                        illnessName.textContent = illness.name;
-                        illnessEffects.textContent = illness.effects;
-                        illnessTreatment.textContent = illness.treatment;
-                        illnessDialog.style.display = 'block';
-                    });
-                    illnessList.appendChild(li);
-                }
-            });
+        // Form submission functionality
+        document.getElementById('condition-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const conditionInput = document.getElementById('condition').value.toLowerCase().trim();
+            searchCondition(conditionInput);
         });
 
-        // Close the modal when the user clicks the close button
-        closeModal.onclick = function() {
-            illnessDialog.style.display = 'none';
+        function quickSearch(condition) {
+            document.getElementById('condition').value = condition;
+            searchCondition(condition);
         }
 
-        // Close the modal when the user clicks outside of it
-        window.onclick = function(event) {
-            if (event.target == illnessDialog) {
-                illnessDialog.style.display = 'none';
+        function searchCondition(condition) {
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const resultSection = document.getElementById('result-section');
+            const loading = document.getElementById('loading');
+            const resultCard = document.getElementById('result-card');
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            btnText.textContent = 'Searching...';
+            loading.style.display = 'block';
+            resultCard.style.display = 'none';
+            resultSection.classList.add('show');
+
+            // Process the search
+            setTimeout(async () => {
+                const firstAidInfo = await getFirstAidInfo(condition);
+                displayFirstAidInfo(firstAidInfo, condition);
+                
+                // Reset button state
+                submitBtn.classList.remove('loading');
+                btnText.textContent = '🚨 Get First Aid Instructions';
+                loading.style.display = 'none';
+                resultCard.style.display = 'block';
+            }, 1000);
+        }
+
+        async function getFirstAidInfo(condition) {
+            try {
+                const response = await fetch("https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQm5IZkJDMlNyYUVUTjIyZVN3UWFNX3BFTU85SWpCM2NUMUk3T2dxejhLSzBhNWNMMXNzZlp3c09BSTR6YW1Sc1BmdGNTVk1GY0liT1RoWDZZX1lNZlZ0Z1dqd3c9PQ==", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        prompt: `You are a First Aid expert. Provide first aid instructions for "${condition}". Please respond in the following JSON format:
+                        {
+                            "condition": "Name of the condition",
+                            "description": "Brief description of the condition and its symptoms",
+                            "first_aid_steps": "Step-by-step first aid instructions. Use numbered steps like: 1. Step one 2. Step two etc."
+                        }
+                        
+                        Important: Focus on immediate first aid care. Keep instructions clear and actionable. Always emphasize calling emergency services for serious conditions.`
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                
+                // Try to parse the AI response as JSON
+                try {
+                    const responseText = data.response || data.result || data.output || data.text || '';
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const aiResponse = JSON.parse(jsonMatch[0]);
+                        return {
+                            condition: aiResponse.condition || condition,
+                            description: aiResponse.description || 'Unable to provide description',
+                            firstAidSteps: aiResponse.first_aid_steps || 'Unable to provide first aid steps'
+                        };
+                    }
+                } catch (parseError) {
+                    console.log('JSON parsing failed, using fallback parsing');
+                }
+                
+                // If JSON parsing fails, try to extract information from plain text
+                const aiText = data.response || data.result || data.output || data.text || '';
+                return parseTextResponse(aiText, condition);
+            } catch (error) {
+                console.error('Error calling AI API:', error);
+                return getLocalFirstAidInfo(condition);
             }
         }
+
+        function parseTextResponse(text, condition) {
+            const lines = text.split('\n').filter(line => line.trim());
+            let description = '';
+            let steps = '';
+            
+            // Try to find description and steps in the text
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.toLowerCase().includes('description') || line.toLowerCase().includes('symptom')) {
+                    description = lines[i + 1] || line;
+                    break;
+                }
+            }
+            
+            // Extract steps (look for numbered items or bullet points)
+            const stepLines = lines.filter(line => 
+                /^\d+\./.test(line.trim()) || 
+                line.includes('•') || 
+                line.toLowerCase().includes('step') ||
+                line.toLowerCase().includes('first')
+            );
+            
+            steps = stepLines.join('\n') || lines.slice(1).join('\n');
+            
+            return {
+                condition: condition,
+                description: description || 'A medical condition requiring immediate attention.',
+                firstAidSteps: steps || 'Call emergency services immediately and follow their instructions.'
+            };
+        }
+
+        function getLocalFirstAidInfo(condition) {
+            // Local first aid database as fallback
+            const firstAidDatabase = {
+                'heart attack': {
+                    condition: 'Heart Attack',
+                    description: 'A heart attack occurs when blood flow to part of the heart is blocked. Common symptoms include chest pain, shortness of breath, nausea, and sweating.',
+                    firstAidSteps: '1. Call 911 immediately\n2. Have the person sit down and rest\n3. Give aspirin if available and the person is not allergic\n4. Loosen tight clothing\n5. Be prepared to perform CPR if the person becomes unconscious\n6. Stay with the person until help arrives'
+                },
+                'stroke': {
+                    condition: 'Stroke',
+                    description: 'A stroke occurs when blood supply to the brain is interrupted. Signs include sudden numbness, confusion, trouble speaking, or severe headache.',
+                    firstAidSteps: '1. Call 911 immediately\n2. Note the time symptoms started\n3. Keep the person calm and comfortable\n4. Do not give food or water\n5. If conscious, help them lie down with head and shoulders slightly raised\n6. If unconscious, place in recovery position\n7. Monitor breathing and pulse'
+                },
+                'burns': {
+                    condition: 'Burns',
+                    description: 'Burns can be caused by heat, chemicals, electricity, or radiation. Severity ranges from minor to life-threatening.',
+                    firstAidSteps: '1. Remove from heat source safely\n2. Cool the burn with running water for 10-20 minutes\n3. Remove jewelry and loose clothing before swelling\n4. Cover with sterile gauze or clean cloth\n5. Do not use ice, butter, or ointments\n6. For severe burns, call 911\n7. Treat for shock if necessary'
+                },
+                'choking': {
+                    condition: 'Choking',
+                    description: 'Choking occurs when an object blocks the throat or windpipe, preventing normal breathing.',
+                    firstAidSteps: '1. Encourage coughing if person is conscious\n2. If unable to cough, speak, or breathe, perform back blows\n3. Give 5 sharp back blows between shoulder blades\n4. If unsuccessful, perform abdominal thrusts (Heimlich maneuver)\n5. Place hands above navel and thrust inward and upward\n6. Alternate between back blows and abdominal thrusts\n7. Call 911 if object cannot be dislodged'
+                },
+                'allergic reaction': {
+                    condition: 'Allergic Reaction',
+                    description: 'An allergic reaction can range from mild to severe (anaphylaxis). Symptoms include rash, swelling, difficulty breathing, and low blood pressure.',
+                    firstAidSteps: '1. Call 911 for severe reactions\n2. Remove or avoid the allergen\n3. Help person use their epinephrine auto-injector if available\n4. Keep person lying down with legs elevated\n5. Loosen tight clothing\n6. Do not give anything by mouth\n7. Be prepared to perform CPR\n8. Monitor breathing and pulse continuously'
+                },
+                'seizure': {
+                    condition: 'Seizure',
+                    description: 'A seizure is a sudden, uncontrolled electrical disturbance in the brain that can cause changes in behavior, movements, or consciousness.',
+                    firstAidSteps: '1. Stay calm and time the seizure\n2. Keep person safe from injury\n3. Clear area of hard objects\n4. Do not hold person down or put anything in their mouth\n5. Turn person on their side after seizure ends\n6. Stay with person until fully conscious\n7. Call 911 if seizure lasts more than 5 minutes\n8. Provide reassurance as person recovers'
+                },
+                'bleeding': {
+                    condition: 'Severe Bleeding',
+                    description: 'Severe bleeding can lead to shock and death if not controlled quickly. It requires immediate first aid attention.',
+                    firstAidSteps: '1. Apply direct pressure with clean cloth\n2. Do not remove embedded objects\n3. Elevate injured area above heart level if possible\n4. Apply pressure to pressure points if bleeding continues\n5. Apply tourniquets only if trained and as last resort\n6. Call 911 immediately\n7. Treat for shock\n8. Keep person warm and calm'
+                },
+                'fracture': {
+                    condition: 'Fracture (Broken Bone)',
+                    description: 'A fracture is a break in a bone. It can be closed (skin intact) or open (bone protruding through skin).',
+                    firstAidSteps: '1. Do not move the person unless in immediate danger\n2. Control any bleeding with direct pressure\n3. Immobilize the injured area\n4. Apply ice wrapped in cloth to reduce swelling\n5. Do not try to realign the bone\n6. Check circulation below the injury\n7. Call 911 for severe fractures\n8. Treat for shock if necessary'
+                }
+            };
+
+            // Check for exact matches or partial matches
+            for (let key in firstAidDatabase) {
+                if (condition.toLowerCase().includes(key) || key.includes(condition.toLowerCase())) {
+                    return firstAidDatabase[key];
+                }
+            }
+            
+            return {
+                condition: condition,
+                description: 'A medical condition that may require immediate attention.',
+                firstAidSteps: '1. Assess the situation for safety\n2. Check if person is conscious and breathing\n3. Call 911 if condition is serious\n4. Provide comfort and reassurance\n5. Do not move the person unless necessary\n6. Monitor vital signs until help arrives'
+            };
+        }
+
+        function displayFirstAidInfo(info, searchTerm) {
+            document.getElementById('condition-name').textContent = info.condition;
+            document.getElementById('condition-description').textContent = info.description;
+            document.getElementById('first-aid-steps').innerHTML = info.firstAidSteps.replace(/\n/g, '<br>');
+        }
+
+        // Add interactive effects
+        document.getElementById('condition').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = '#e1e8ed';
+            }
+        });
+
+        // Add Enter key support
+        document.getElementById('condition').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('condition-form').dispatchEvent(new Event('submit'));
+            }
+        });
     </script>
 </body>
 </html>
